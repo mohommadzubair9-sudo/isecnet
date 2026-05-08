@@ -1,0 +1,76 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+}
+
+model Credential {
+  id                  String    @id @default(cuid())
+  name                String
+  type                String
+  source              String
+  sourceDetail        String    @default("")
+  status              String    @default("ACTIVE")
+  riskScore           Int       @default(0)
+  riskLevel           String    @default("LOW")
+  lastUsed            DateTime?
+  lastRotated         DateTime?
+  createdAt           DateTime  @default(now())
+  expiresAt           DateTime?
+  neverExpires        Boolean   @default(true)
+  isShared            Boolean   @default(false)
+  hasProductionAccess Boolean   @default(false)
+  isOverPrivileged    Boolean   @default(false)
+  permissions         String    @default("[]")
+  blastRadius         String    @default("[]")
+  metadata            String    @default("{}")
+}
+
+model Alert {
+  id             String    @id @default(cuid())
+  title          String
+  description    String
+  severity       String
+  type           String
+  status         String    @default("OPEN")
+  credentialId   String?
+  credentialName String?
+  detectedAt     DateTime  @default(now())
+  resolvedAt     DateTime?
+  metadata       String    @default("{}")
+}
+
+model ScanJob {
+  id               String    @id @default(cuid())
+  status           String    @default("PENDING")
+  source           String
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  credentialsFound Int       @default(0)
+  issuesFound      Int       @default(0)
+  logs             String    @default("[]")
+}
+
+model RotationHistory {
+  id             String   @id @default(cuid())
+  credentialId   String
+  credentialName String
+  rotatedAt      DateTime @default(now())
+  rotatedBy      String   @default("admin@isecnet.io")
+  previousRisk   Int
+  newRisk        Int
+  status         String   @default("SUCCESS")
+  notes          String?
+}
