@@ -7,7 +7,7 @@
     "dev": "nodemon --exec tsx src/index.ts --ext ts",
     "start": "tsx src/index.ts",
     "build": "npx prisma generate --schema=prisma/schema.prod.prisma",
-    "start:prod": "npx prisma migrate deploy --schema=prisma/schema.prod.prisma && tsx src/index.ts",
+    "start:prod": "npx prisma db push --schema=prisma/schema.prod.prisma && tsx src/index.ts",
     "db:migrate": "prisma migrate dev --name init",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
